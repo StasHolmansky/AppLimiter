@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AppLimiter</string>
+    <string name="accessibility_service_description">Отслеживает запуск приложений с исчерпанным дневным лимитом и возвращает на главный экран.</string>
+</resources>
