@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -73,6 +74,8 @@ import com.stas.applimiter.utils.launchablePackageNames
 @Composable
 fun HomeScreen(
     navController: NavController,
+    bankSafeMode: Boolean = false,
+    onBankSafeModeChange: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val colors = AppTheme.colors
@@ -155,7 +158,7 @@ fun HomeScreen(
         usageMap[it.packageName] ?: 0L
     }
 
-    val canMonitor = hasUsageAccess && hasAccessibilityAccess
+    val canMonitor = hasUsageAccess && hasAccessibilityAccess && !bankSafeMode
 
     Scaffold(
         containerColor = colors.background,
@@ -191,44 +194,60 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .background(colors.background),
         ) {
-            MonitoringToggle(
-                isMonitoring = isMonitoring,
-                enabled = canMonitor,
-                onToggle = { enabled ->
-                    if (enabled) {
-                        hasUsageAccess = hasUsageStatsPermission(context)
-                        hasAccessibilityAccess = hasAppBlockAccessibilityPermission(context)
-                        if (hasUsageAccess && hasAccessibilityAccess) {
-                            UsageMonitorService.start(context)
-                        }
-                    } else {
-                        UsageMonitorService.stop(context)
-                    }
+            BankSafeCard(
+                enabled = bankSafeMode,
+                onToggle = { on ->
+                    if (on && isMonitoring) UsageMonitorService.stop(context)
+                    onBankSafeModeChange(on)
+                },
+                onOpenAccessibility = {
+                    context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            if (!hasUsageAccess) {
-                PermissionCard(
-                    text = "Для работы мониторинга необходим доступ к статистике использования.",
-                    buttonText = "Предоставить доступ",
-                    onClick = {
-                        context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+            if (!bankSafeMode) {
+                MonitoringToggle(
+                    isMonitoring = isMonitoring,
+                    enabled = canMonitor,
+                    onToggle = { enabled ->
+                        if (enabled) {
+                            hasUsageAccess = hasUsageStatsPermission(context)
+                            hasAccessibilityAccess = hasAppBlockAccessibilityPermission(context)
+                            if (hasUsageAccess && hasAccessibilityAccess) {
+                                UsageMonitorService.start(context)
+                            }
+                        } else {
+                            UsageMonitorService.stop(context)
+                        }
                     },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                 )
-            }
 
-            if (!hasAccessibilityAccess) {
-                PermissionCard(
-                    text = "Чтобы закрывать приложения после исчерпания лимита, " +
-                        "включите AppLimiter в специальных возможностях.",
-                    buttonText = "Включить блокировку",
-                    onClick = {
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                    },
-                )
+                if (!hasUsageAccess) {
+                    PermissionCard(
+                        text = "Для работы мониторинга необходим доступ к статистике использования.",
+                        buttonText = "Предоставить доступ",
+                        onClick = {
+                            context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                        },
+                    )
+                }
+
+                if (!hasAccessibilityAccess) {
+                    PermissionCard(
+                        text = "Чтобы закрывать приложения после исчерпания лимита, " +
+                            "включите AppLimiter в специальных возможностях.",
+                        buttonText = "Включить блокировку",
+                        onClick = {
+                            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                        },
+                    )
+                }
             }
 
             OutlinedTextField(
@@ -271,6 +290,72 @@ fun HomeScreen(
                             )
                         },
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BankSafeCard(
+    enabled: Boolean,
+    onToggle: (Boolean) -> Unit,
+    onOpenAccessibility: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = AppTheme.colors
+    AppCard(modifier = modifier) {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountBalance,
+                    contentDescription = null,
+                    tint = if (enabled) colors.accent else colors.textMuted,
+                    modifier = Modifier.size(22.dp),
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Банковский режим",
+                        color = colors.textPrimary,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = if (enabled)
+                            "Мониторинг приостановлен — банковские приложения работают в штатном режиме"
+                        else
+                            "Включите перед запуском банковского приложения",
+                        color = colors.textSecondary,
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp,
+                    )
+                }
+                Switch(
+                    checked = enabled,
+                    onCheckedChange = onToggle,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = colors.onAccent,
+                        checkedTrackColor = colors.accent,
+                        uncheckedThumbColor = colors.card,
+                        uncheckedTrackColor = colors.chipInactiveBg,
+                    ),
+                )
+            }
+            if (enabled) {
+                Button(
+                    onClick = onOpenAccessibility,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.accent,
+                        contentColor = colors.onAccent,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Открыть Специальные возможности", fontWeight = FontWeight.SemiBold)
                 }
             }
         }

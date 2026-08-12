@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
+import com.stas.applimiter.data.preferences.BankSafePreferences
 import com.stas.applimiter.data.preferences.ThemePreferences
 import com.stas.applimiter.navigation.AppNavigation
 import com.stas.applimiter.ui.theme.AppLimiterTheme
@@ -27,6 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themePrefs = remember { ThemePreferences.get(this) }
             val preference by themePrefs.preference.collectAsState()
+            val bankSafePrefs = remember { BankSafePreferences.get(this) }
+            val bankSafeMode by bankSafePrefs.enabled.collectAsState()
             val systemDark = isSystemInDarkTheme()
             val isDark = resolveDarkMode(preference, systemDark)
             val palette = remember(isDark) { getPalette(isDark) }
@@ -47,6 +50,8 @@ class MainActivity : ComponentActivity() {
                 AppNavigation(
                     preference = preference,
                     onPreferenceChange = themePrefs::setPreference,
+                    bankSafeMode = bankSafeMode,
+                    onBankSafeModeChange = bankSafePrefs::setEnabled,
                 )
             }
         }

@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets
 fun AppNavigation(
     preference: ThemePreference,
     onPreferenceChange: (ThemePreference) -> Unit,
+    bankSafeMode: Boolean = false,
+    onBankSafeModeChange: (Boolean) -> Unit = {},
 ) {
     val navController = rememberNavController()
 
@@ -27,7 +29,11 @@ fun AppNavigation(
         startDestination = "home",
     ) {
         composable("home") {
-            HomeScreen(navController = navController)
+            HomeScreen(
+                navController = navController,
+                bankSafeMode = bankSafeMode,
+                onBankSafeModeChange = onBankSafeModeChange,
+            )
         }
 
         composable("settings") {
@@ -35,6 +41,8 @@ fun AppNavigation(
                 navController = navController,
                 preference = preference,
                 onPreferenceChange = onPreferenceChange,
+                bankSafeMode = bankSafeMode,
+                onBankSafeModeChange = onBankSafeModeChange,
             )
         }
 
