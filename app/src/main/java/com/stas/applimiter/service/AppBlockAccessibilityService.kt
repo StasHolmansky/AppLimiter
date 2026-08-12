@@ -5,8 +5,10 @@ import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import com.stas.applimiter.data.local.DatabaseProvider
 import com.stas.applimiter.data.local.dao.AppLimitDao
+import com.stas.applimiter.data.local.dao.AppScheduleDao
 import com.stas.applimiter.data.local.dao.LimitExtensionDao
 import com.stas.applimiter.data.repository.UsageStatsRepository
+import com.stas.applimiter.utils.isAllowedNow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,6 +25,7 @@ class AppBlockAccessibilityService : AccessibilityService() {
 
     private lateinit var appLimitDao: AppLimitDao
     private lateinit var extensionDao: LimitExtensionDao
+    private lateinit var appScheduleDao: AppScheduleDao
     private lateinit var usageRepository: UsageStatsRepository
 
     private var currentPackageName: String? = null
@@ -35,6 +38,7 @@ class AppBlockAccessibilityService : AccessibilityService() {
         val database = DatabaseProvider.getDatabase(applicationContext)
         appLimitDao = database.appLimitDao()
         extensionDao = database.limitExtensionDao()
+        appScheduleDao = database.appScheduleDao()
         usageRepository = UsageStatsRepository(applicationContext)
         homePackages = findHomePackages()
     }
@@ -63,6 +67,29 @@ class AppBlockAccessibilityService : AccessibilityService() {
     }
 
     private suspend fun monitorCurrentApp(packageName: String) {
+        if (!UsageMonitorService.isMonitoringEnabled(applicationContext)) return
+
+        // Schedule check — kick out immediately if outside allowed window
+        val schedule = appScheduleDao.getByPackageName(packageName)
+        if (schedule != null) {
+            if (!schedule.isAllowedNow()) {
+                withContext(Dispatchers.Main) { performGlobalAction(GLOBAL_ACTION_HOME) }
+                return
+            }
+            // Keep watching while app is open — kick out the moment the window ends
+            while (currentPackageName == packageName &&
+                UsageMonitorService.isMonitoringEnabled(applicationContext)
+            ) {
+                if (!schedule.isAllowedNow()) {
+                    withContext(Dispatchers.Main) { performGlobalAction(GLOBAL_ACTION_HOME) }
+                    return
+                }
+                delay(CHECK_INTERVAL_MS)
+            }
+            return
+        }
+
+        // Duration-based check
         val limit = appLimitDao.getByPackageName(packageName) ?: return
 
         while (currentPackageName == packageName &&

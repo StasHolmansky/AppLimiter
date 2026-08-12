@@ -58,6 +58,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.stas.applimiter.data.local.DatabaseProvider
+import com.stas.applimiter.data.local.entity.AppScheduleEntity
 import com.stas.applimiter.data.model.InstalledApp
 import com.stas.applimiter.data.repository.UsageStatsRepository
 import com.stas.applimiter.navigation.encodeNavArg
@@ -66,8 +67,10 @@ import com.stas.applimiter.ui.components.AppCard
 import com.stas.applimiter.ui.theme.AppTheme
 import com.stas.applimiter.ui.utils.toBitmap
 import com.stas.applimiter.utils.formatMinutes
+import com.stas.applimiter.utils.formatWindow
 import com.stas.applimiter.utils.hasAppBlockAccessibilityPermission
 import com.stas.applimiter.utils.hasUsageStatsPermission
+import com.stas.applimiter.utils.isAllowedNow
 import com.stas.applimiter.utils.launchablePackageNames
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,11 +103,12 @@ fun HomeScreen(
         }
     }
 
-    val dao = remember {
-        DatabaseProvider.getDatabase(context).appLimitDao()
-    }
+    val db = remember { DatabaseProvider.getDatabase(context) }
+    val dao = remember { db.appLimitDao() }
+    val scheduleDao = remember { db.appScheduleDao() }
 
     val savedLimits = dao.getAll().collectAsState(initial = emptyList()).value
+    val savedSchedules = scheduleDao.getAll().collectAsState(initial = emptyList()).value
 
     val lifecycleOwner = LocalLifecycleOwner.current
     var usageRefreshKey by remember { mutableStateOf(0) }
@@ -154,9 +158,12 @@ fun HomeScreen(
             it.packageName.contains(searchText, ignoreCase = true)
     }
 
-    val sortedApps = filteredApps.sortedByDescending {
-        usageMap[it.packageName] ?: 0L
-    }
+    val scheduledPackages = savedSchedules.map { it.packageName }.toSet()
+
+    val sortedApps = filteredApps.sortedWith(
+        compareByDescending<InstalledApp> { it.packageName in scheduledPackages || savedLimits.any { l -> l.packageName == it.packageName } }
+            .thenByDescending { usageMap[it.packageName] ?: 0L }
+    )
 
     val canMonitor = hasUsageAccess && hasAccessibilityAccess && !bankSafeMode
 
@@ -284,6 +291,7 @@ fun HomeScreen(
                         limitMinutes = savedLimits
                             .find { it.packageName == app.packageName }
                             ?.limitMinutes,
+                        schedule = savedSchedules.find { it.packageName == app.packageName },
                         onClick = {
                             navController.navigate(
                                 "appLimit/${app.packageName}/${encodeNavArg(app.appName)}",
@@ -444,6 +452,7 @@ private fun AppRow(
     app: InstalledApp,
     usageMillis: Long,
     limitMinutes: Long?,
+    schedule: AppScheduleEntity?,
     onClick: () -> Unit,
 ) {
     val colors = AppTheme.colors
@@ -480,13 +489,31 @@ private fun AppRow(
                     color = colors.textSecondary,
                     fontSize = 13.sp,
                 )
-                if (limitMinutes != null) {
-                    Text(
-                        text = "Лимит: ${formatMinutes(limitMinutes)}",
-                        color = colors.accent,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
+                when {
+                    schedule != null -> {
+                        val allowed = schedule.isAllowedNow()
+                        Text(
+                            text = "Расписание: ${schedule.formatWindow()}",
+                            color = if (allowed) colors.accent else colors.danger,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        if (!allowed) {
+                            Text(
+                                text = "Сейчас недоступно",
+                                color = colors.danger,
+                                fontSize = 12.sp,
+                            )
+                        }
+                    }
+                    limitMinutes != null -> {
+                        Text(
+                            text = "Лимит: ${formatMinutes(limitMinutes)}",
+                            color = colors.accent,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
                 }
             }
         }

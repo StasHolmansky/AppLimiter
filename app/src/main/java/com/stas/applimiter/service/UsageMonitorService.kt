@@ -17,11 +17,15 @@ import com.stas.applimiter.MainActivity
 import com.stas.applimiter.R
 import com.stas.applimiter.data.local.DatabaseProvider
 import com.stas.applimiter.data.local.dao.AppLimitDao
+import com.stas.applimiter.data.local.dao.AppScheduleDao
 import com.stas.applimiter.data.local.dao.LimitExtensionDao
 import com.stas.applimiter.data.local.entity.AppLimitEntity
+import com.stas.applimiter.data.local.entity.AppScheduleEntity
 import com.stas.applimiter.data.local.entity.LimitExtensionEntity
 import com.stas.applimiter.data.repository.UsageStatsRepository
 import com.stas.applimiter.utils.formatMinutes
+import com.stas.applimiter.utils.formatWindow
+import com.stas.applimiter.utils.isAllowedNow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,11 +48,14 @@ class UsageMonitorService : Service() {
 
     private lateinit var extensionDao: LimitExtensionDao
 
+    private lateinit var appScheduleDao: AppScheduleDao
+
     private lateinit var scope: CoroutineScope
 
     private var monitorJob: Job? = null
 
     private val notifiedApps = ConcurrentHashMap.newKeySet<String>()
+    private val scheduleNotifiedApps = ConcurrentHashMap.newKeySet<String>()
 
     private var currentDayKey: Int = -1
 
@@ -60,6 +67,7 @@ class UsageMonitorService : Service() {
         val database = DatabaseProvider.getDatabase(applicationContext)
         appLimitDao = database.appLimitDao()
         extensionDao = database.limitExtensionDao()
+        appScheduleDao = database.appScheduleDao()
 
         scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -174,6 +182,19 @@ class UsageMonitorService : Service() {
                 )
             }
         }
+
+        // Schedule-based checks — notify when app is outside allowed window
+        val schedules = appScheduleDao.getAllOnce()
+        schedules.forEach { schedule ->
+            if (!schedule.isAllowedNow()) {
+                if (scheduleNotifiedApps.add(schedule.packageName)) {
+                    sendScheduleNotification(schedule)
+                    Log.d(TAG, "${schedule.appName}: outside schedule ${schedule.formatWindow()}")
+                }
+            } else {
+                scheduleNotifiedApps.remove(schedule.packageName)
+            }
+        }
     }
 
     private suspend fun resetIfNewDay() {
@@ -183,6 +204,7 @@ class UsageMonitorService : Service() {
         if (today != currentDayKey) {
             currentDayKey = today
             notifiedApps.clear()
+            scheduleNotifiedApps.clear()
             extensionDao.deleteExceptDay(today)
         }
     }
@@ -334,6 +356,20 @@ class UsageMonitorService : Service() {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+    }
+
+    private fun sendScheduleNotification(schedule: AppScheduleEntity) {
+        val notification = NotificationCompat.Builder(this, CHANNEL_ALERT_ID)
+            .setContentTitle("${schedule.appName} недоступен")
+            .setContentText("Доступно только ${schedule.formatWindow()}")
+            .setSmallIcon(R.drawable.ic_notification)
+            .setAutoCancel(true)
+            .setContentIntent(contentIntent())
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        getSystemService(NotificationManager::class.java)
+            .notify(schedule.packageName.hashCode(), notification)
     }
 
     private fun showExtensionGrantedNotification(
