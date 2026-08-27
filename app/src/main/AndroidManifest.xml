@@ -26,7 +26,7 @@
             android:exported="false">
             <meta-data
                 android:name="autoStoreLocales"
-                android:value="false" />
+                android:value="true" />
         </service>
         <activity
             android:name=".MainActivity"

@@ -1,5 +1,6 @@
 package com.stas.applimiter.ui.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.Settings
@@ -109,7 +110,13 @@ fun SettingsScreen(
                     lang.label to (languageCode == lang.code)
                 },
                 onSelect = { index ->
-                    languagePrefs.setLanguage(SUPPORTED_LANGUAGES[index].code)
+                    val code = SUPPORTED_LANGUAGES[index].code
+                    if (code != languageCode) {
+                        languagePrefs.setLanguage(
+                            code = code,
+                            activity = context as? Activity,
+                        )
+                    }
                 },
             )
 

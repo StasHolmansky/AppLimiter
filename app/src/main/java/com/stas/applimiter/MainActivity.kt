@@ -1,9 +1,10 @@
 package com.stas.applimiter
 
+import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -13,13 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
 import com.stas.applimiter.data.preferences.BankSafePreferences
+import com.stas.applimiter.data.preferences.LanguagePreferences
 import com.stas.applimiter.data.preferences.ThemePreferences
 import com.stas.applimiter.navigation.AppNavigation
 import com.stas.applimiter.ui.theme.AppLimiterTheme
 import com.stas.applimiter.ui.theme.getPalette
 import com.stas.applimiter.ui.theme.resolveDarkMode
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguagePreferences.wrapContext(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
