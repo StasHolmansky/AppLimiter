@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppLimiter</string>
+    <string name="accessibility_service_description">Observa apps que alcanzaron su límite diario o están fuera de su horario y te devuelve a la pantalla de inicio.</string>
+
+    <string name="cd_settings">Ajustes</string>
+    <string name="cd_back">Atrás</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="limits_title">Límites</string>
+    <string name="feedback_title">Comentarios</string>
+    <string name="save">Guardar</string>
+    <string name="search_apps">Buscar apps</string>
+
+    <string name="monitoring_active">Monitoreo activo</string>
+    <string name="monitoring_stopped">Monitoreo detenido</string>
+    <string name="monitoring_need_permissions">Concede los permisos necesarios abajo</string>
+    <string name="perm_usage_text">Se necesita acceso al uso para que el monitoreo funcione.</string>
+    <string name="perm_usage_button">Conceder acceso</string>
+    <string name="perm_accessibility_text">Para cerrar apps al alcanzar el límite, activa AppLimiter en Accesibilidad.</string>
+    <string name="perm_accessibility_button">Activar bloqueo</string>
+    <string name="usage_today">Hoy: %1$s</string>
+    <string name="schedule_label">Horario: %1$s</string>
+    <string name="currently_unavailable">No disponible ahora</string>
+    <string name="limit_label">Límite: %1$s</string>
+
+    <string name="bank_safe_title">Modo banco</string>
+    <string name="bank_safe_hint_off">Actívalo antes de abrir una app bancaria</string>
+    <string name="bank_safe_hint_on">Monitoreo en pausa — las apps bancarias funcionan con normalidad</string>
+    <string name="bank_safe_open_accessibility">Abrir Accesibilidad</string>
+    <string name="bank_safe_settings_desc">Pausa el monitoreo y Accesibilidad para que las apps bancarias funcionen bien</string>
+    <string name="bank_safe_settings_hint">Al activarlo se abre Accesibilidad para desactivar AppLimiter allí.</string>
+
+    <string name="limit_type">Tipo de límite</string>
+    <string name="limit_type_duration">Límite de tiempo</string>
+    <string name="limit_type_schedule">Horario</string>
+    <string name="max_daily_time">Tiempo máximo al día</string>
+    <string name="hours">Horas</string>
+    <string name="minutes">Minutos</string>
+    <string name="duration_help">La app se cerrará cuando el uso total del día alcance este límite.</string>
+    <string name="available_from">Disponible desde</string>
+    <string name="available_until">Disponible hasta</string>
+    <string name="schedule_help">La app se cerrará si se abre fuera de esta ventana. Se admiten rangos nocturnos (por ejemplo, 21:00 – 01:00).</string>
+    <string name="clear_all_limits">Quitar todos los límites</string>
+
+    <string name="appearance">Apariencia</string>
+    <string name="language">Idioma</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Clara</string>
+    <string name="theme_dark">Oscura</string>
+    <string name="theme_system_hint">Sistema sigue el modo de Android.</string>
+    <string name="compatibility">Compatibilidad</string>
+    <string name="support">Soporte</string>
+    <string name="feedback_nav_title">Comentarios y sugerencias</string>
+    <string name="feedback_nav_hint">Envía ideas, peticiones o problemas al desarrollador.</string>
+
+    <string name="feedback_heading">Comentarios y sugerencias</string>
+    <string name="feedback_body">Si tienes ideas, peticiones o notaste algo que se puede mejorar en %1$s, escribe al correo de soporte abajo.</string>
+    <string name="contact_email_label">CORREO DE CONTACTO</string>
+    <string name="feedback_email_subject">Comentarios %1$s</string>
+    <string name="feedback_toast_no_mail">Envía un mensaje manualmente a %1$s.</string>
+    <string name="feedback_thanks">Gracias por ayudar a mejorar la app.</string>
+
+    <string name="format_hours_minutes">%1$d h %2$d min</string>
+    <string name="format_minutes_only">%1$d min</string>
+
+    <string name="notif_channel_service_name">Monitoreo de uso</string>
+    <string name="notif_channel_service_desc">Notificación continua mientras el monitoreo está activo</string>
+    <string name="notif_channel_alert_name">Límite excedido</string>
+    <string name="notif_channel_alert_desc">Alertas cuando se supera el límite diario de una app</string>
+    <string name="notif_foreground_text">El monitoreo de uso de apps está activo</string>
+    <string name="notif_limit_exceeded_title">Límite excedido: %1$s</string>
+    <string name="notif_limit_exceeded_body">Usado %1$s de %2$s</string>
+    <string name="notif_extend_action">+%1$d min</string>
+    <string name="notif_schedule_unavailable_title">%1$s no disponible</string>
+    <string name="notif_schedule_body">Disponible solo %1$s</string>
+    <string name="notif_extension_granted_title">Límite extendido: %1$s</string>
+    <string name="notif_extension_granted_body">Se añadieron %1$s. Hoy no hay otra extensión</string>
+</resources>

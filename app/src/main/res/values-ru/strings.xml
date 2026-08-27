@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppLimiter</string>
+    <string name="accessibility_service_description">Отслеживает запуск приложений с исчерпанным дневным лимитом или вне расписания и возвращает на главный экран.</string>
+
+    <string name="cd_settings">Настройки</string>
+    <string name="cd_back">Назад</string>
+    <string name="settings_title">Настройки</string>
+    <string name="limits_title">Ограничения</string>
+    <string name="feedback_title">Обратная связь</string>
+    <string name="save">Сохранить</string>
+    <string name="search_apps">Поиск приложения</string>
+
+    <string name="monitoring_active">Мониторинг активен</string>
+    <string name="monitoring_stopped">Мониторинг остановлен</string>
+    <string name="monitoring_need_permissions">Предоставьте необходимые разрешения ниже</string>
+    <string name="perm_usage_text">Для работы мониторинга необходим доступ к статистике использования.</string>
+    <string name="perm_usage_button">Предоставить доступ</string>
+    <string name="perm_accessibility_text">Чтобы закрывать приложения после исчерпания лимита, включите AppLimiter в специальных возможностях.</string>
+    <string name="perm_accessibility_button">Включить блокировку</string>
+    <string name="usage_today">Сегодня: %1$s</string>
+    <string name="schedule_label">Расписание: %1$s</string>
+    <string name="currently_unavailable">Сейчас недоступно</string>
+    <string name="limit_label">Лимит: %1$s</string>
+
+    <string name="bank_safe_title">Банковский режим</string>
+    <string name="bank_safe_hint_off">Включите перед запуском банковского приложения</string>
+    <string name="bank_safe_hint_on">Мониторинг приостановлен — банковские приложения работают в штатном режиме</string>
+    <string name="bank_safe_open_accessibility">Открыть Специальные возможности</string>
+    <string name="bank_safe_settings_desc">Отключает мониторинг и специальные возможности — банковские приложения работают корректно</string>
+    <string name="bank_safe_settings_hint">При включении откроются Специальные возможности — отключите там AppLimiter.</string>
+
+    <string name="limit_type">Тип ограничения</string>
+    <string name="limit_type_duration">Лимит времени</string>
+    <string name="limit_type_schedule">Расписание</string>
+    <string name="max_daily_time">Максимальное время в день</string>
+    <string name="hours">Часы</string>
+    <string name="minutes">Минуты</string>
+    <string name="duration_help">Приложение закроется, как только суммарное время за день достигнет лимита.</string>
+    <string name="available_from">Доступно с</string>
+    <string name="available_until">Доступно до</string>
+    <string name="schedule_help">Приложение закроется при открытии вне указанного окна. Поддерживается ночной диапазон (например, 21:00 – 01:00).</string>
+    <string name="clear_all_limits">Снять все ограничения</string>
+
+    <string name="appearance">Оформление</string>
+    <string name="language">Язык</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_system_hint">Системная следует режиму Android.</string>
+    <string name="compatibility">Совместимость</string>
+    <string name="support">Поддержка</string>
+    <string name="feedback_nav_title">Обратная связь и предложения</string>
+    <string name="feedback_nav_hint">Идеи, пожелания или проблемы можно отправить разработчику.</string>
+
+    <string name="feedback_heading">Обратная связь и предложения</string>
+    <string name="feedback_body">Если у вас есть идеи, пожелания или вы заметили, что в %1$s можно улучшить, напишите на почту поддержки ниже.</string>
+    <string name="contact_email_label">ПОЧТА ДЛЯ СВЯЗИ</string>
+    <string name="feedback_email_subject">Обратная связь %1$s</string>
+    <string name="feedback_toast_no_mail">Пожалуйста, отправьте сообщение вручную на %1$s.</string>
+    <string name="feedback_thanks">Спасибо, что помогаете делать приложение лучше.</string>
+
+    <string name="format_hours_minutes">%1$d ч %2$d мин</string>
+    <string name="format_minutes_only">%1$d мин</string>
+
+    <string name="notif_channel_service_name">Мониторинг использования</string>
+    <string name="notif_channel_service_desc">Постоянное уведомление о работе мониторинга</string>
+    <string name="notif_channel_alert_name">Превышение лимита</string>
+    <string name="notif_channel_alert_desc">Оповещения о превышении дневного лимита приложения</string>
+    <string name="notif_foreground_text">Мониторинг использования приложений включён</string>
+    <string name="notif_limit_exceeded_title">Лимит превышен: %1$s</string>
+    <string name="notif_limit_exceeded_body">Использовано %1$s из %2$s</string>
+    <string name="notif_extend_action">+%1$d мин</string>
+    <string name="notif_schedule_unavailable_title">%1$s недоступен</string>
+    <string name="notif_schedule_body">Доступно только %1$s</string>
+    <string name="notif_extension_granted_title">Лимит продлён: %1$s</string>
+    <string name="notif_extension_granted_body">Добавлено %1$s. Повторное продление сегодня недоступно</string>
+</resources>

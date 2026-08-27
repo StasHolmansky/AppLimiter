@@ -49,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import com.stas.applimiter.R
 import com.stas.applimiter.data.local.DatabaseProvider
 import com.stas.applimiter.data.local.entity.AppScheduleEntity
 import com.stas.applimiter.data.model.InstalledApp
@@ -184,7 +186,7 @@ fun HomeScreen(
                     IconButton(onClick = { navController.navigate("settings") }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Настройки",
+                            contentDescription = stringResource(R.string.cd_settings),
                             tint = colors.textPrimary,
                         )
                     }
@@ -237,8 +239,8 @@ fun HomeScreen(
 
                 if (!hasUsageAccess) {
                     PermissionCard(
-                        text = "Для работы мониторинга необходим доступ к статистике использования.",
-                        buttonText = "Предоставить доступ",
+                        text = stringResource(R.string.perm_usage_text),
+                        buttonText = stringResource(R.string.perm_usage_button),
                         onClick = {
                             context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
                         },
@@ -247,9 +249,8 @@ fun HomeScreen(
 
                 if (!hasAccessibilityAccess) {
                     PermissionCard(
-                        text = "Чтобы закрывать приложения после исчерпания лимита, " +
-                            "включите AppLimiter в специальных возможностях.",
-                        buttonText = "Включить блокировку",
+                        text = stringResource(R.string.perm_accessibility_text),
+                        buttonText = stringResource(R.string.perm_accessibility_button),
                         onClick = {
                             context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                         },
@@ -263,7 +264,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                label = { Text("Поиск приложения") },
+                label = { Text(stringResource(R.string.search_apps)) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -327,16 +328,16 @@ private fun BankSafeCard(
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Банковский режим",
+                        text = stringResource(R.string.bank_safe_title),
                         color = colors.textPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Text(
                         text = if (enabled)
-                            "Мониторинг приостановлен — банковские приложения работают в штатном режиме"
+                            stringResource(R.string.bank_safe_hint_on)
                         else
-                            "Включите перед запуском банковского приложения",
+                            stringResource(R.string.bank_safe_hint_off),
                         color = colors.textSecondary,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
@@ -363,7 +364,7 @@ private fun BankSafeCard(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Открыть Специальные возможности", fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.bank_safe_open_accessibility), fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -386,14 +387,14 @@ private fun MonitoringToggle(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (isMonitoring) "Мониторинг активен" else "Мониторинг остановлен",
+                    text = if (isMonitoring) stringResource(R.string.monitoring_active) else stringResource(R.string.monitoring_stopped),
                     color = colors.textPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
                 if (!enabled) {
                     Text(
-                        text = "Предоставьте необходимые разрешения ниже",
+                        text = stringResource(R.string.monitoring_need_permissions),
                         color = colors.textSecondary,
                         fontSize = 13.sp,
                     )
@@ -455,6 +456,7 @@ private fun AppRow(
     schedule: AppScheduleEntity?,
     onClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val colors = AppTheme.colors
     AppCard(onClick = onClick) {
         Row(
@@ -485,7 +487,7 @@ private fun AppRow(
                 )
                 val minutes = usageMillis / 1000 / 60
                 Text(
-                    text = "Сегодня: ${formatMinutes(minutes)}",
+                    text = stringResource(R.string.usage_today, formatMinutes(context, minutes)),
                     color = colors.textSecondary,
                     fontSize = 13.sp,
                 )
@@ -493,14 +495,14 @@ private fun AppRow(
                     schedule != null -> {
                         val allowed = schedule.isAllowedNow()
                         Text(
-                            text = "Расписание: ${schedule.formatWindow()}",
+                            text = stringResource(R.string.schedule_label, schedule.formatWindow()),
                             color = if (allowed) colors.accent else colors.danger,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
                         )
                         if (!allowed) {
                             Text(
-                                text = "Сейчас недоступно",
+                                text = stringResource(R.string.currently_unavailable),
                                 color = colors.danger,
                                 fontSize = 12.sp,
                             )
@@ -508,7 +510,7 @@ private fun AppRow(
                     }
                     limitMinutes != null -> {
                         Text(
-                            text = "Лимит: ${formatMinutes(limitMinutes)}",
+                            text = stringResource(R.string.limit_label, formatMinutes(context, limitMinutes)),
                             color = colors.accent,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,

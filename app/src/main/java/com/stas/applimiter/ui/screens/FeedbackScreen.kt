@@ -30,11 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.stas.applimiter.R
 import com.stas.applimiter.config.Release
 import com.stas.applimiter.ui.theme.AppTheme
 
@@ -53,7 +55,7 @@ fun FeedbackScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Обратная связь",
+                        text = stringResource(R.string.feedback_title),
                         color = colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -64,7 +66,7 @@ fun FeedbackScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = colors.textPrimary,
                         )
                     }
@@ -92,7 +94,7 @@ fun FeedbackScreen(
                     .padding(16.dp),
             ) {
                 Text(
-                    text = "Обратная связь и предложения",
+                    text = stringResource(R.string.feedback_heading),
                     color = colors.textPrimary,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -100,9 +102,7 @@ fun FeedbackScreen(
                 )
 
                 Text(
-                    text = "Если у вас есть идеи, пожелания или вы заметили, " +
-                        "что в ${Release.APP_DISPLAY_NAME} можно улучшить, " +
-                        "напишите на почту поддержки ниже.",
+                    text = stringResource(R.string.feedback_body, Release.APP_DISPLAY_NAME),
                     color = colors.textSecondary,
                     fontSize = 15.sp,
                     lineHeight = 22.sp,
@@ -110,7 +110,7 @@ fun FeedbackScreen(
                 )
 
                 Text(
-                    text = "ПОЧТА ДЛЯ СВЯЗИ",
+                    text = stringResource(R.string.contact_email_label),
                     color = colors.textMuted,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -120,7 +120,12 @@ fun FeedbackScreen(
 
                 Button(
                     onClick = {
-                        val subject = Uri.encode("Обратная связь ${Release.APP_DISPLAY_NAME}")
+                        val subject = Uri.encode(
+                            context.getString(
+                                R.string.feedback_email_subject,
+                                Release.APP_DISPLAY_NAME,
+                            ),
+                        )
                         val uri = Uri.parse("mailto:${Release.SUPPORT_EMAIL}?subject=$subject")
                         val intent = Intent(Intent.ACTION_SENDTO, uri)
                         try {
@@ -128,7 +133,10 @@ fun FeedbackScreen(
                         } catch (_: ActivityNotFoundException) {
                             Toast.makeText(
                                 context,
-                                "Пожалуйста, отправьте сообщение вручную на ${Release.SUPPORT_EMAIL}.",
+                                context.getString(
+                                    R.string.feedback_toast_no_mail,
+                                    Release.SUPPORT_EMAIL,
+                                ),
                                 Toast.LENGTH_LONG,
                             ).show()
                         }
@@ -152,7 +160,7 @@ fun FeedbackScreen(
                 }
 
                 Text(
-                    text = "Спасибо, что помогаете делать приложение лучше.",
+                    text = stringResource(R.string.feedback_thanks),
                     color = colors.textMuted,
                     fontSize = 13.sp,
                     lineHeight = 18.sp,

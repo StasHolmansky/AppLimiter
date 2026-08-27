@@ -28,19 +28,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.stas.applimiter.R
 import com.stas.applimiter.config.Release
+import com.stas.applimiter.data.preferences.LanguagePreferences
 import com.stas.applimiter.ui.components.AppCard
 import com.stas.applimiter.ui.components.FeedbackNavRow
+import com.stas.applimiter.ui.components.LanguageChipRow
 import com.stas.applimiter.ui.components.SectionLabel
 import com.stas.applimiter.ui.components.ThemeChipRow
+import com.stas.applimiter.ui.theme.SUPPORTED_LANGUAGES
 import com.stas.applimiter.ui.theme.AppTheme
 import com.stas.applimiter.ui.theme.ThemePreference
 
@@ -56,6 +64,8 @@ fun SettingsScreen(
     val context = LocalContext.current
     val colors = AppTheme.colors
     val versionLabel = rememberVersionLabel()
+    val languagePrefs = remember { LanguagePreferences.get(context) }
+    val languageCode by languagePrefs.languageCode.collectAsState()
 
     Scaffold(
         containerColor = colors.background,
@@ -63,7 +73,7 @@ fun SettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Настройки",
+                        text = stringResource(R.string.settings_title),
                         color = colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -74,7 +84,7 @@ fun SettingsScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = colors.textPrimary,
                         )
                     }
@@ -93,12 +103,24 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
-            SectionLabel(text = "Оформление")
+            SectionLabel(text = stringResource(R.string.language))
+            LanguageChipRow(
+                options = SUPPORTED_LANGUAGES.map { lang ->
+                    lang.label to (languageCode == lang.code)
+                },
+                onSelect = { index ->
+                    languagePrefs.setLanguage(SUPPORTED_LANGUAGES[index].code)
+                },
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            SectionLabel(text = stringResource(R.string.appearance))
 
             val options = listOf(
-                "Системная" to (preference == ThemePreference.System),
-                "Светлая" to (preference == ThemePreference.Light),
-                "Тёмная" to (preference == ThemePreference.Dark),
+                stringResource(R.string.theme_system) to (preference == ThemePreference.System),
+                stringResource(R.string.theme_light) to (preference == ThemePreference.Light),
+                stringResource(R.string.theme_dark) to (preference == ThemePreference.Dark),
             )
             ThemeChipRow(
                 options = options,
@@ -114,7 +136,7 @@ fun SettingsScreen(
             )
 
             Text(
-                text = "Системная следует режиму Android.",
+                text = stringResource(R.string.theme_system_hint),
                 color = colors.textSecondary,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 8.dp),
@@ -122,7 +144,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionLabel(text = "Совместимость")
+            SectionLabel(text = stringResource(R.string.compatibility))
             AppCard(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -137,13 +159,13 @@ fun SettingsScreen(
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Банковский режим",
+                            text = stringResource(R.string.bank_safe_title),
                             color = colors.textPrimary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            text = "Отключает мониторинг и специальные возможности — банковские приложения работают корректно",
+                            text = stringResource(R.string.bank_safe_settings_desc),
                             color = colors.textSecondary,
                             fontSize = 13.sp,
                             lineHeight = 18.sp,
@@ -169,7 +191,7 @@ fun SettingsScreen(
                 }
             }
             Text(
-                text = "При включении откроются Специальные возможности — отключите там AppLimiter.",
+                text = stringResource(R.string.bank_safe_settings_hint),
                 color = colors.textSecondary,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 6.dp),
@@ -178,10 +200,10 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionLabel(text = "Поддержка")
+            SectionLabel(text = stringResource(R.string.support))
             FeedbackNavRow(
-                title = "Обратная связь и предложения",
-                hint = "Идеи, пожелания или проблемы можно отправить разработчику.",
+                title = stringResource(R.string.feedback_nav_title),
+                hint = stringResource(R.string.feedback_nav_hint),
                 onClick = { navController.navigate("feedback") },
             )
 

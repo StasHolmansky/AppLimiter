@@ -41,11 +41,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.stas.applimiter.R
 import com.stas.applimiter.data.local.DatabaseProvider
 import com.stas.applimiter.data.local.entity.AppLimitEntity
 import com.stas.applimiter.data.local.entity.AppScheduleEntity
@@ -140,7 +142,7 @@ fun AppLimitScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Ограничения",
+                        text = stringResource(R.string.limits_title),
                         color = colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -151,7 +153,7 @@ fun AppLimitScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = colors.textPrimary,
                         )
                     }
@@ -192,7 +194,7 @@ fun AppLimitScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            SectionLabel(text = "Тип ограничения")
+            SectionLabel(text = stringResource(R.string.limit_type))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -201,7 +203,7 @@ fun AppLimitScreen(
                 FilterChip(
                     selected = limitType == LimitType.Duration,
                     onClick = { limitType = LimitType.Duration },
-                    label = { Text("Лимит времени") },
+                    label = { Text(stringResource(R.string.limit_type_duration)) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = colors.accent,
                         selectedLabelColor = colors.onAccent,
@@ -218,7 +220,7 @@ fun AppLimitScreen(
                 FilterChip(
                     selected = limitType == LimitType.Schedule,
                     onClick = { limitType = LimitType.Schedule },
-                    label = { Text("Расписание") },
+                    label = { Text(stringResource(R.string.limit_type_schedule)) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = colors.accent,
                         selectedLabelColor = colors.onAccent,
@@ -238,7 +240,7 @@ fun AppLimitScreen(
 
             when (limitType) {
                 LimitType.Duration -> {
-                    SectionLabel(text = "Максимальное время в день")
+                    SectionLabel(text = stringResource(R.string.max_daily_time))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -246,7 +248,7 @@ fun AppLimitScreen(
                         OutlinedTextField(
                             value = hours,
                             onValueChange = { hours = it.filter { ch -> ch.isDigit() } },
-                            label = { Text("Часы") },
+                            label = { Text(stringResource(R.string.hours)) },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp),
@@ -255,7 +257,7 @@ fun AppLimitScreen(
                         OutlinedTextField(
                             value = minutes,
                             onValueChange = { minutes = it.filter { ch -> ch.isDigit() } },
-                            label = { Text("Минуты") },
+                            label = { Text(stringResource(R.string.minutes)) },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp),
@@ -264,7 +266,7 @@ fun AppLimitScreen(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Приложение закроется, как только суммарное время за день достигнет лимита.",
+                        text = stringResource(R.string.duration_help),
                         color = colors.textSecondary,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
@@ -272,14 +274,14 @@ fun AppLimitScreen(
                 }
 
                 LimitType.Schedule -> {
-                    SectionLabel(text = "Доступно с")
+                    SectionLabel(text = stringResource(R.string.available_from))
                     TimePicker(
                         state = fromState,
                         colors = timePickerColors,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    SectionLabel(text = "Доступно до")
+                    SectionLabel(text = stringResource(R.string.available_until))
                     TimePicker(
                         state = untilState,
                         colors = timePickerColors,
@@ -287,7 +289,7 @@ fun AppLimitScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Приложение закроется при открытии вне указанного окна. Поддерживается ночной диапазон (например, 21:00 – 01:00).",
+                        text = stringResource(R.string.schedule_help),
                         color = colors.textSecondary,
                         fontSize = 13.sp,
                         lineHeight = 18.sp,
@@ -335,7 +337,7 @@ fun AppLimitScreen(
                     contentColor = colors.onAccent,
                 ),
             ) {
-                Text("Сохранить", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.save), fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -355,7 +357,7 @@ fun AppLimitScreen(
                 ),
                 border = androidx.compose.foundation.BorderStroke(1.dp, colors.danger),
             ) {
-                Text("Снять все ограничения", fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.clear_all_limits), fontWeight = FontWeight.SemiBold)
             }
         }
     }

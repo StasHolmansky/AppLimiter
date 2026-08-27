@@ -1,4 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AppLimiter</string>
-    <string name="accessibility_service_description">Отслеживает запуск приложений с исчерпанным дневным лимитом и возвращает на главный экран.</string>
+    <string name="accessibility_service_description">Watches apps that have reached their daily limit or are outside their allowed schedule and returns you to the home screen.</string>
+
+    <!-- Common -->
+    <string name="cd_settings">Settings</string>
+    <string name="cd_back">Back</string>
+    <string name="settings_title">Settings</string>
+    <string name="limits_title">Limits</string>
+    <string name="feedback_title">Feedback</string>
+    <string name="save">Save</string>
+    <string name="search_apps">Search apps</string>
+
+    <!-- Home / monitoring -->
+    <string name="monitoring_active">Monitoring is on</string>
+    <string name="monitoring_stopped">Monitoring is off</string>
+    <string name="monitoring_need_permissions">Grant the required permissions below</string>
+    <string name="perm_usage_text">Usage access is required for monitoring to work.</string>
+    <string name="perm_usage_button">Grant access</string>
+    <string name="perm_accessibility_text">To close apps when a limit is reached, enable AppLimiter in Accessibility.</string>
+    <string name="perm_accessibility_button">Enable blocking</string>
+    <string name="usage_today">Today: %1$s</string>
+    <string name="schedule_label">Schedule: %1$s</string>
+    <string name="currently_unavailable">Unavailable now</string>
+    <string name="limit_label">Limit: %1$s</string>
+
+    <!-- Bank-safe mode -->
+    <string name="bank_safe_title">Bank mode</string>
+    <string name="bank_safe_hint_off">Turn on before opening a banking app</string>
+    <string name="bank_safe_hint_on">Monitoring paused — banking apps work normally</string>
+    <string name="bank_safe_open_accessibility">Open Accessibility</string>
+    <string name="bank_safe_settings_desc">Pauses monitoring and Accessibility so banking apps work correctly</string>
+    <string name="bank_safe_settings_hint">When turned on, Accessibility opens so you can disable AppLimiter there.</string>
+
+    <!-- App limit screen -->
+    <string name="limit_type">Limit type</string>
+    <string name="limit_type_duration">Time limit</string>
+    <string name="limit_type_schedule">Schedule</string>
+    <string name="max_daily_time">Maximum time per day</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="duration_help">The app will close once total usage for the day reaches this limit.</string>
+    <string name="available_from">Available from</string>
+    <string name="available_until">Available until</string>
+    <string name="schedule_help">The app will close if opened outside this window. Overnight ranges are supported (for example, 21:00 – 01:00).</string>
+    <string name="clear_all_limits">Remove all limits</string>
+
+    <!-- Settings -->
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system_hint">System follows Android mode.</string>
+    <string name="compatibility">Compatibility</string>
+    <string name="support">Support</string>
+    <string name="feedback_nav_title">Feedback and suggestions</string>
+    <string name="feedback_nav_hint">Send ideas, requests, or issues to the developer.</string>
+
+    <!-- Feedback -->
+    <string name="feedback_heading">Feedback and suggestions</string>
+    <string name="feedback_body">If you have ideas, requests, or noticed something that could be improved in %1$s, write to the support email below.</string>
+    <string name="contact_email_label">CONTACT EMAIL</string>
+    <string name="feedback_email_subject">Feedback %1$s</string>
+    <string name="feedback_toast_no_mail">Please send a message manually to %1$s.</string>
+    <string name="feedback_thanks">Thank you for helping make the app better.</string>
+
+    <!-- Time format -->
+    <string name="format_hours_minutes">%1$d h %2$d min</string>
+    <string name="format_minutes_only">%1$d min</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_service_name">Usage monitoring</string>
+    <string name="notif_channel_service_desc">Ongoing notification while monitoring is running</string>
+    <string name="notif_channel_alert_name">Limit exceeded</string>
+    <string name="notif_channel_alert_desc">Alerts when a daily app limit is exceeded</string>
+    <string name="notif_foreground_text">App usage monitoring is on</string>
+    <string name="notif_limit_exceeded_title">Limit exceeded: %1$s</string>
+    <string name="notif_limit_exceeded_body">Used %1$s of %2$s</string>
+    <string name="notif_extend_action">+%1$d min</string>
+    <string name="notif_schedule_unavailable_title">%1$s is unavailable</string>
+    <string name="notif_schedule_body">Available only %1$s</string>
+    <string name="notif_extension_granted_title">Limit extended: %1$s</string>
+    <string name="notif_extension_granted_body">Added %1$s. Another extension is not available today</string>
 </resources>

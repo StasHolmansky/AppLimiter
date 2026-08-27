@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,22 +77,55 @@ fun ThemeChipRow(
                 label = label,
                 active = active,
                 onClick = { onSelect(index) },
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
 
 @Composable
-private fun RowScope.ThemeChip(
+fun LanguageChipRow(
+    options: List<Pair<String, Boolean>>,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        options.chunked(2).forEachIndexed { rowIndex, rowItems ->
+            val startIndex = rowIndex * 2
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                rowItems.forEachIndexed { offset, (label, active) ->
+                    ThemeChip(
+                        label = label,
+                        active = active,
+                        onClick = { onSelect(startIndex + offset) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeChip(
     label: String,
     active: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = AppTheme.colors
     val shape = RoundedCornerShape(20.dp)
     Box(
-        modifier = Modifier
-            .weight(1f)
+        modifier = modifier
             .clip(shape)
             .background(if (active) colors.chipActiveBg else colors.chipInactiveBg)
             .clickable(onClick = onClick)
@@ -102,7 +135,7 @@ private fun RowScope.ThemeChip(
         Text(
             text = label,
             color = if (active) colors.chipActiveText else colors.chipInactiveText,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

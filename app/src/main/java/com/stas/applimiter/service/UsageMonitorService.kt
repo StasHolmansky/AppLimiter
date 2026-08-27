@@ -255,18 +255,18 @@ class UsageMonitorService : Service() {
 
         val serviceChannel = NotificationChannel(
             CHANNEL_SERVICE_ID,
-            "Мониторинг использования",
+            getString(R.string.notif_channel_service_name),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = "Постоянное уведомление о работе мониторинга"
+            description = getString(R.string.notif_channel_service_desc)
         }
 
         val alertChannel = NotificationChannel(
             CHANNEL_ALERT_ID,
-            "Превышение лимита",
+            getString(R.string.notif_channel_alert_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Оповещения о превышении дневного лимита приложения"
+            description = getString(R.string.notif_channel_alert_desc)
         }
 
         manager.createNotificationChannel(serviceChannel)
@@ -290,8 +290,8 @@ class UsageMonitorService : Service() {
     private fun buildForegroundNotification(): Notification {
 
         return NotificationCompat.Builder(this, CHANNEL_SERVICE_ID)
-            .setContentTitle("AppLimiter")
-            .setContentText("Мониторинг использования приложений включён")
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getString(R.string.notif_foreground_text))
             .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .setContentIntent(contentIntent())
@@ -307,10 +307,13 @@ class UsageMonitorService : Service() {
     ) {
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ALERT_ID)
-            .setContentTitle("Лимит превышен: ${limit.appName}")
+            .setContentTitle(getString(R.string.notif_limit_exceeded_title, limit.appName))
             .setContentText(
-                "Использовано ${formatMinutes(usedMinutes)} из " +
-                    formatMinutes(effectiveLimitMinutes)
+                getString(
+                    R.string.notif_limit_exceeded_body,
+                    formatMinutes(this, usedMinutes),
+                    formatMinutes(this, effectiveLimitMinutes),
+                )
             )
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
@@ -321,7 +324,7 @@ class UsageMonitorService : Service() {
             ALLOWED_EXTENSION_MINUTES.forEach { minutes ->
                 builder.addAction(
                     R.drawable.ic_notification,
-                    "+$minutes мин",
+                    getString(R.string.notif_extend_action, minutes.toInt()),
                     extensionIntent(limit, minutes)
                 )
             }
@@ -360,8 +363,12 @@ class UsageMonitorService : Service() {
 
     private fun sendScheduleNotification(schedule: AppScheduleEntity) {
         val notification = NotificationCompat.Builder(this, CHANNEL_ALERT_ID)
-            .setContentTitle("${schedule.appName} недоступен")
-            .setContentText("Доступно только ${schedule.formatWindow()}")
+            .setContentTitle(
+                getString(R.string.notif_schedule_unavailable_title, schedule.appName)
+            )
+            .setContentText(
+                getString(R.string.notif_schedule_body, schedule.formatWindow())
+            )
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setContentIntent(contentIntent())
@@ -378,9 +385,12 @@ class UsageMonitorService : Service() {
         minutes: Long
     ) {
         val notification = NotificationCompat.Builder(this, CHANNEL_ALERT_ID)
-            .setContentTitle("Лимит продлён: $appName")
+            .setContentTitle(getString(R.string.notif_extension_granted_title, appName))
             .setContentText(
-                "Добавлено ${formatMinutes(minutes)}. Повторное продление сегодня недоступно"
+                getString(
+                    R.string.notif_extension_granted_body,
+                    formatMinutes(this, minutes),
+                )
             )
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
